@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - DerivX Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #0a0e1a;
+            --secondary-bg: #1a1d23;
+            --accent-blue: #00d4ff;
+            --accent-amber: #ffb347;
+            --success-green: #10b981;
+            --warning-red: #ef4444;
+            --text-primary: #ffffff;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+        }
+
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .font-display {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary-bg) 0%, #1a1a2e 50%, var(--secondary-bg) 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--accent-blue), var(--success-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-blue);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        .content-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .content-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.2);
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-slide-up {
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .faq-item {
+            background: rgba(26, 29, 35, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .faq-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-answer.open {
+            max-height: 200px;
+        }
+    </style>
+</head>
+<body class="text-white">
+    <!-- Navigation Header -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-gray-900 bg-opacity-90 backdrop-blur-lg border-b border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-8">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-green-500 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-sm">DX</span>
+                        </div>
+                        <h1 class="text-xl font-display font-bold gradient-text">DerivX Pro</h1>
+                    </div>
+                    <div class="hidden md:flex space-x-6">
+                        <a href="index.html" class="nav-link text-gray-300 hover:text-blue-400 px-3 py-2 text-sm font-medium">Dashboard</a>
+                        <a href="strategies.html" class="nav-link text-gray-300 hover:text-blue-400 px-3 py-2 text-sm font-medium">Strategies</a>
+                        <a href="performance.html" class="nav-link text-gray-300 hover:text-blue-400 px-3 py-2 text-sm font-medium">Performance</a>
+                        <a href="about.html" class="nav-link active text-white hover:text-blue-400 px-3 py-2 text-sm font-medium">About</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center">
+                        <span class="text-sm font-medium">JD</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-16">
+        <!-- Hero Section -->
+        <section class="py-12 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto text-center">
+                <h2 class="text-4xl md:text-5xl font-display font-bold mb-4 animate-fade-in">
+                    About <span class="gradient-text">DerivX Pro</span>
+                </h2>
+                <p class="text-xl text-gray-300 mb-8 max-w-3xl mx-auto animate-slide-up">
+                    Your comprehensive trading analysis platform for Deriv synthetic indices, powered by advanced algorithms and proven strategies.
+                </p>
+            </div>
+        </section>
+
+        <!-- App Overview -->
+        <section class="py-12 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h3 class="text-3xl font-bold text-white mb-6">Advanced Trading Intelligence</h3>
+                        <p class="text-gray-300 mb-6">
+                            DerivX Pro represents the cutting edge of trading analysis technology, specifically designed for Deriv synthetic indices. 
+                            Our platform combines sophisticated pattern recognition, proven trading strategies, and real-time market analysis to 
+                            provide traders with the insights they need to succeed.
+                        </p>
+                        <p class="text-gray-300 mb-6">
+                            Whether you're a scalper looking for quick entries, a swing trader seeking larger moves, or a precision trader 
+                            using sniper entries, our platform adapts to your trading style and provides actionable intelligence for 
+                            profitable trading decisions.
+                        </p>
+                        <div class="flex space-x-4">
+                            <button onclick="scrollToFeatures()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                                Explore Features
+                            </button>
+                            <button onclick="scrollToGuide()" class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                                User Guide
+                            </button>
+                        </div>
+                    </div>
+                    <div class="content-card rounded-lg p-8">
+                        <h4 class="text-xl font-bold text-white mb-4">Platform Statistics</h4>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Total Users</span>
+                                <span class="text-white font-bold">12,450+</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Successful Trades</span>
+                                <span class="text-green-400 font-bold">89,230+</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Average Win Rate</span>
+                                <span class="text-blue-400 font-bold">74.2%</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Strategies Available</span>
+                                <span class="text-white font-bold">4 Proven</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Markets Covered</span>
+                                <span class="text-white font-bold">5 Indices</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Features -->
+        <section id="features" class="py-12 px-4 sm:px-6 lg:px-8 bg-gray-900 bg-opacity-50">
+            <div class="max-w-7xl mx-auto">
+                <h2 class="text-3xl font-bold text-white mb-12 text-center">Key Features</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="feature-card rounded-lg p-6">
+                        <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">Chart Analysis</h3>
+                        <p class="text-gray-300">
+                            Upload your trading charts and receive instant AI-powered analysis with pattern recognition, 
+                            support/resistance levels, and optimal entry points.
+                        </p>
+                    </div>
+
+                    <div class="feature-card rounded-lg p-6">
+                        <div class="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">Signal Generation</h3>
+                        <p class="text-gray-300">
+                            Get real-time trading signals based on proven strategies with detailed entry, stop loss, 
+                            and take profit levels for maximum profitability.
+                        </p>
+                    </div>
+
+                    <div class="feature-card rounded-lg p-6">
+                        <div class="w-12 h-12 bg-amber-600 rounded-lg flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">Strategy Library</h3>
+                        <p class="text-gray-300">
+                            Access our comprehensive library of proven trading strategies including scalping, swing trading, 
+                            sniper entries, and mean reversion techniques.
+                        </p>
+                    </div>
+
+                    <div class="feature-card rounded-lg p-6">
+                        <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">Performance Tracking</h3>
+                        <p class="text-gray-300">
+                            Comprehensive performance analytics with detailed trade journaling, profit/loss tracking, 
+                            and advanced risk management tools.
+                        </p>
+                    </div>
+
+                    <div class="feature-card rounded-lg p-6">
+                        <div class="w-12 h-12 bg-red-600 rounded-lg flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">Risk Management</h3>
+                        <p class="text-gray-300">
+                            Advanced risk management tools including position sizing calculators, risk/reward analysis, 
+                            and portfolio optimization features.
+                        </p>
+                    </div>
+
+                    <div class="feature-card rounded-lg p-6">
+                        <div class="w-12 h-12 bg-indigo-600 rounded-lg flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">Market Intelligence</h3>
+                        <p class="text-gray-300">
+                            Real-time market data, volatility analysis, and correlation matrices for all major 
+                            synthetic indices to inform your trading decisions.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- User Guide -->
+        <section id="guide" class="py-12 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto">
+                <h2 class="text-3xl font-bold text-white mb-12 text-center">User Guide</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    <div>
+                        <h3 class="text-2xl font-bold text-white mb-6">Getting Started</h3>
+                        <div class="space-y-6">
+                            <div class="content-card rounded-lg p-6">
+                                <h4 class="text-lg font-semibold text-white mb-3">1. Upload Your Chart</h4>
+                                <p class="text-gray-300">
+                                    Start by uploading a screenshot of your trading chart. Our AI will analyze the image 
+                                    and identify key patterns, support/resistance levels, and potential entry points.
+                                </p>
+                            </div>
+                            
+                            <div class="content-card rounded-lg p-6">
+                                <h4 class="text-lg font-semibold text-white mb-3">2. Select Strategy</h4>
+                                <p class="text-gray-300">
+                                    Choose from our library of proven trading strategies. Each strategy has been 
+                                    backtested and optimized for different market conditions and trading styles.
+                                </p>
+                            </div>
+                            
+                            <div class="content-card rounded-lg p-6">
+                                <h4 class="text-lg font-semibold text-white mb-3">3. Analyze Signals</h4>
+                                <p class="text-gray-300">
+                                    Review the generated trading signals with detailed entry points, stop losses, 
+                                    and take profit levels. Each signal includes confidence ratings and risk metrics.
+                                </p>
+                            </div>
+                            
+                            <div class="content-card rounded-lg p-6">
+                                <h4 class="text-lg font-semibold text-white mb-3">4. Execute & Track</h4>
+                                <p class="text-gray-300">
+                                    Execute your trades and use our performance tracking tools to monitor your 
+                                    progress, analyze your results, and continuously improve your trading.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-2xl font-bold text-white mb-6">Best Practices</h3>
+                        <div class="space-y-6">
+                            <div class="content-card rounded-lg p-6">
+                                <h4 class="text-lg font-semibold text-white mb-3">Risk Management</h4>
+                                <ul class="text-gray-300 space-y-2">
+                                    <li>• Never risk more than 2% of your account per trade</li>
+                                    <li>• Always use stop losses to protect your capital</li>
+                                    <li>• Diversify across different strategies and timeframes</li>
+                                    <li>• Monitor your risk/reward ratios consistently</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="content-card rounded-lg p-6">
+                                <h4 class="text-lg font-semibold text-white mb-3">Strategy Selection</h4>
+                                <ul class="text-gray-300 space-y-2">
+                                    <li>• Choose strategies that match your trading style</li>
+                                    <li>• Consider market volatility when selecting strategies</li>
+                                    <li>• Test strategies on demo accounts first</li>
+                                    <li>• Adapt strategies based on market conditions</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="content-card rounded-lg p-6">
+                                <h4 class="text-lg font-semibold text-white mb-3">Performance Optimization</h4>
+                                <ul class="text-gray-300 space-y-2">
+                                    <li>• Keep detailed trading records and journals</li>
+                                    <li>• Regularly review and analyze your performance</li>
+                                    <li>• Continuously educate yourself on market dynamics</li>
+                                    <li>• Stay disciplined with your trading plan</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="py-12 px-4 sm:px-6 lg:px-8 bg-gray-900 bg-opacity-50">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold text-white mb-12 text-center">Frequently Asked Questions</h2>
+                
+                <div class="space-y-4">
+                    <div class="faq-item rounded-lg">
+                        <button onclick="toggleFAQ(0)" class="w-full px-6 py-4 text-left flex justify-between items-center">
+                            <span class="text-lg font-semibold text-white">How accurate are the trading signals?</span>
+                            <svg class="w-5 h-5 text-gray-400 transform transition-transform faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="faq-answer px-6 pb-4">
+                            <p class="text-gray-300">
+                                Our signals are based on proven strategies with historical win rates between 65-78%. However, 
+                                past performance doesn't guarantee future results. We recommend using proper risk management 
+                                and combining signals with your own analysis.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item rounded-lg">
+                        <button onclick="toggleFAQ(1)" class="w-full px-6 py-4 text-left flex justify-between items-center">
+                            <span class="text-lg font-semibold text-white">Which synthetic indices work best with your strategies?</span>
+                            <svg class="w-5 h-5 text-gray-400 transform transition-transform faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="faq-answer px-6 pb-4">
+                            <p class="text-gray-300">
+                                Our strategies are optimized for all major synthetic indices including Volatility 10, 25, 50, 75, and 100. 
+                                Each strategy performs best with specific indices - for example, scalping works well with Vol 25 and 50, 
+                                while swing trading is ideal for Vol 10 and 25.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item rounded-lg">
+                        <button onclick="toggleFAQ(2)" class="w-full px-6 py-4 text-left flex justify-between items-center">
+                            <span class="text-lg font-semibold text-white">Can I use this platform as a beginner?</span>
+                            <svg class="w-5 h-5 text-gray-400 transform transition-transform faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="faq-answer px-6 pb-4">
+                            <p class="text-gray-300">
+                                Yes! Our platform is designed for traders of all experience levels. We provide detailed explanations 
+                                for each strategy, comprehensive user guides, and risk management tools to help beginners learn 
+                                while providing advanced features for experienced traders.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item rounded-lg">
+                        <button onclick="toggleFAQ(3)" class="w-full px-6 py-4 text-left flex justify-between items-center">
+                            <span class="text-lg font-semibold text-white">How often should I trade using these signals?</span>
+                            <svg class="w-5 h-5 text-gray-400 transform transition-transform faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="faq-answer px-6 pb-4">
+                            <p class="text-gray-300">
+                                Quality over quantity is key. Our signals are designed to provide high-probability setups, 
+                                not constant action. Depending on your strategy, you might see 2-10 quality signals per day. 
+                                We recommend waiting for setups that meet all your criteria rather than forcing trades.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item rounded-lg">
+                        <button onclick="toggleFAQ(4)" class="w-full px-6 py-4 text-left flex justify-between items-center">
+                            <span class="text-lg font-semibold text-white">What is the minimum capital required?</span>
+                            <svg class="w-5 h-5 text-gray-400 transform transition-transform faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="faq-answer px-6 pb-4">
+                            <p class="text-gray-300">
+                                The minimum capital depends on your risk tolerance and chosen strategy. We recommend starting 
+                                with at least $1,000 for proper risk management. Our position sizing calculator helps you 
+                                determine appropriate trade sizes based on your account balance and risk percentage.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item rounded-lg">
+                        <button onclick="toggleFAQ(5)" class="w-full px-6 py-4 text-left flex justify-between items-center">
+                            <span class="text-lg font-semibold text-white">How do I optimize my trading performance?</span>
+                            <svg class="w-5 h-5 text-gray-400 transform transition-transform faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="faq-answer px-6 pb-4">
+                            <p class="text-gray-300">
+                                Use our performance tracking tools to analyze your trades, identify patterns in your wins and losses, 
+                                and continuously refine your approach. Keep a detailed trading journal, stick to your risk management 
+                                rules, and regularly review your performance metrics to identify areas for improvement.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Information -->
+        <section class="py-12 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl font-bold text-white mb-8">Get Support</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="content-card rounded-lg p-6">
+                        <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Live Chat</h3>
+                        <p class="text-gray-400 mb-4">Get instant support from our trading experts</p>
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                            Start Chat
+                        </button>
+                    </div>
+
+                    <div class="content-card rounded-lg p-6">
+                        <div class="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Email Support</h3>
+                        <p class="text-gray-400 mb-4">Send us your questions and get detailed responses</p>
+                        <button class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                            Send Email
+                        </button>
+                    </div>
+
+                    <div class="content-card rounded-lg p-6">
+                        <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Knowledge Base</h3>
+                        <p class="text-gray-400 mb-4">Browse our comprehensive trading guides and tutorials</p>
+                        <button class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                            Browse Guides
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Legal Information -->
+        <section class="py-12 px-4 sm:px-6 lg:px-8 bg-gray-900 bg-opacity-50">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-2xl font-bold text-white mb-8 text-center">Important Disclaimers</h2>
+                <div class="content-card rounded-lg p-8">
+                    <div class="space-y-4 text-gray-300 text-sm">
+                        <p>
+                            <strong>Risk Warning:</strong> Trading synthetic indices and other financial instruments carries a high level of risk 
+                            and may not be suitable for all investors. You could lose all of your invested capital. Past performance is not 
+                            indicative of future results.
+                        </p>
+                        <p>
+                            <strong>Educational Purpose:</strong> DerivX Pro is an educational and analytical tool designed to help traders 
+                            make informed decisions. It does not constitute financial advice, and we recommend consulting with qualified 
+                            financial advisors before making investment decisions.
+                        </p>
+                        <p>
+                            <strong>Accuracy Disclaimer:</strong> While we strive for accuracy in our analysis and signals, we cannot 
+                            guarantee 100% accuracy. Trading involves inherent risks, and users should always conduct their own research 
+                            and use proper risk management techniques.
+                        </p>
+                        <p>
+                            <strong>Regulatory Compliance:</strong> Users are responsible for ensuring their trading activities comply 
+                            with local laws and regulations in their jurisdiction. We operate in accordance with international financial 
+                            services regulations.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 border-t border-gray-700 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="flex items-center justify-center space-x-3 mb-4">
+                    <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-green-500 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">DX</span>
+                    </div>
+                    <span class="text-xl font-display font-bold gradient-text">DerivX Pro</span>
+                </div>
+                <p class="text-gray-400 text-sm">
+                    © 2025 DerivX Pro. Advanced trading analysis for synthetic indices. Trade responsibly.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function scrollToFeatures() {
+            document.getElementById('features').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function scrollToGuide() {
+            document.getElementById('guide').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function toggleFAQ(index) {
+            const faqItems = document.querySelectorAll('.faq-item');
+            const currentItem = faqItems[index];
+            const answer = currentItem.querySelector('.faq-answer');
+            const icon = currentItem.querySelector('.faq-icon');
+            
+            // Close all other FAQs
+            faqItems.forEach((item, i) => {
+                if (i !== index) {
+                    item.querySelector('.faq-answer').classList.remove('open');
+                    item.querySelector('.faq-icon').style.transform = 'rotate(0deg)';
+                }
+            });
+            
+            // Toggle current FAQ
+            if (answer.classList.contains('open')) {
+                answer.classList.remove('open');
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                answer.classList.add('open');
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+    </script>
+</body>
+</html>

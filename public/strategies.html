@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Strategies - DerivX Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #0a0e1a;
+            --secondary-bg: #1a1d23;
+            --accent-blue: #00d4ff;
+            --accent-amber: #ffb347;
+            --success-green: #10b981;
+            --warning-red: #ef4444;
+            --text-primary: #ffffff;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+        }
+
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .font-display {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary-bg) 0%, #1a1a2e 50%, var(--secondary-bg) 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--accent-blue), var(--success-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-blue);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        .strategy-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .strategy-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        .parameter-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: #374151;
+            outline: none;
+        }
+
+        .parameter-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            cursor: pointer;
+        }
+
+        .parameter-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            cursor: pointer;
+            border: none;
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-slide-up {
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .backtest-result {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .performance-metric {
+            background: rgba(26, 29, 35, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="text-white">
+    <!-- Navigation Header -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-gray-900 bg-opacity-90 backdrop-blur-lg border-b border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-8">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-green-500 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-sm">DX</span>
+                        </div>
+                        <h1 class="text-xl font-display font-bold gradient-text">DerivX Pro</h1>
+                    </div>
+                    <div class="hidden md:flex space-x-6">
+                        <a href="index.html" class="nav-link text-gray-300 hover:text-blue-400 px-3 py-2 text-sm font-medium">Dashboard</a>
+                        <a href="strategies.html" class="nav-link active text-white hover:text-blue-400 px-3 py-2 text-sm font-medium">Strategies</a>
+                        <a href="performance.html" class="nav-link text-gray-300 hover:text-blue-400 px-3 py-2 text-sm font-medium">Performance</a>
+                        <a href="about.html" class="nav-link text-gray-300 hover:text-blue-400 px-3 py-2 text-sm font-medium">About</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center">
+                        <span class="text-sm font-medium">JD</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-16">
+        <!-- Hero Section -->
+        <section class="py-12 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto text-center">
+                <h2 class="text-4xl md:text-5xl font-display font-bold mb-4 animate-fade-in">
+                    Trading <span class="gradient-text">Strategies</span>
+                </h2>
+                <p class="text-xl text-gray-300 mb-8 max-w-3xl mx-auto animate-slide-up">
+                    Discover proven trading strategies for Deriv synthetic indices with detailed analysis, backtesting results, and optimization tools.
+                </p>
+            </div>
+        </section>
+
+        <!-- Strategy Library -->
+        <section class="py-12 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                    <!-- Scalping Strategy -->
+                    <div class="strategy-card rounded-lg p-8">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-2xl font-bold text-white">Scalping Strategy</h3>
+                            <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">72% Win Rate</span>
+                        </div>
+                        
+                        <p class="text-gray-300 mb-6">
+                            Fast-paced trading strategy using 8-period EMA and Stochastic oscillator for quick entries and exits. 
+                            Ideal for capturing small price movements in volatile markets.
+                        </p>
+
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <span class="text-gray-400 text-sm">Timeframe</span>
+                                <div class="text-white font-semibold">5 minutes</div>
+                            </div>
+                            <div>
+                                <span class="text-gray-400 text-sm">Risk:Reward</span>
+                                <div class="text-white font-semibold">1:1.5</div>
+                            </div>
+                            <div>
+                                <span class="text-gray-400 text-sm">Indicators</span>
+                                <div class="text-white text-sm">8 EMA, Stochastic</div>
+                            </div>
+                            <div>
+                                <span class="text-gray-400 text-sm">Best Markets</span>
+                                <div class="text-white text-sm">Vol 25, Vol 50</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <h4 class="text-lg font-semibold text-white mb-3">Entry Rules</h4>
+                            <div class="space-y-2 text-sm text-gray-300">
+                                <div class="flex items-start space-x-2">
+                                    <span class="text-green-400 mt-1">•</span>
+                                    <span>Price above 8 EMA indicating short-term uptrend</span>
+                                </div>
+                                <div class="flex items-start space-x-2">
+                                    <span class="text-green-400 mt-1">•</span>
+                                    <span>Stochastic drops below 20 then crosses back up</span>
+                                </div>
+                                <div class="flex items-start space-x-2">
+                                    <span class="text-green-400 mt-1">•</span>
+                                    <span>Enter on next candle after Stochastic crossover</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex space-x-3">
+                            <button onclick="runBacktest('scalping')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors">
+                                Backtest Strategy
+                            </button>
+                            <button onclick="optimizeStrategy('scalping')" class="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors">
+                                Optimize
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Swing Trading Strategy -->
+                    <div class="strategy-card rounded-lg p-8">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-2xl font-bold text-white">Swing Trading</h3>
+                            <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">68% Win Rate</span>
+                        </div>
+                        
+                        <p class="text-gray-300 mb-6">
+                            Medium-term strategy using moving average crossovers and RSI to capture larger price movements. 
+                            Perfect for traders who prefer fewer trades with higher profit potential.
+                        </p>
+
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <span class="text-gray-400 text-sm">Timeframe</span>
+                                <div class="text-white font-semibold">1-4 hours</div>
+                            </div>
+                            <div>
+                                <span class="text-gray-400 text-sm">Risk:Reward</span>
+                                <div class="text-white font-semibold">1:2</div>
+                            </div>
+                            <div>
+                                <span class="text-gray-400 text-sm">Indicators</span>
+                                <div class="text-white text-sm">20 SMA, 50 SMA, RSI</div>
+                            </div>
+                            <div>
+                                <span class="text-gray-400 text-sm">Best Markets</span>
+                                <div class="text-white text-sm">Vol 10, Vol 25</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <h4 class="text-lg font-semibold text-white mb-3">Entry Rules</h4>
+                            <div class="space-y-2 text-sm text-gray-300">
+                                <div class="flex items-start space-x-2">
+                                    <span class="text-green-400 mt-1">•</span>
+                                    <span>20 SMA crosses above 50 SMA (bullish crossover)</span>
+                                </div>
+                                <div class="flex items-start space-x-2">
+                                    <span class="text-green-400 mt-1">•</span>
+                                    <span>RSI above 50 but below 70 (momentum without overbought)</span>
+                                </div>
+                                <div class="flex items-start space-x-2">
+                                    <span class="text-green-400 mt-1">•</span>
+                                    <span>Wait for pullback to 20 SMA for entry</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex space-x-3">
+                            <button onclick="runBacktest('swing')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors">
+                                Backtest Strategy
+                            </button>
+                            <button onclick="optimizeStrategy('swing')" class="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors">
+                                Optimize
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Sniper Entry Strategy -->
+                    <div class="strategy-card rounded-lg p-8">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-2xl font-bold text-white">Sniper Entry</h3>
+                            <span class="bg-amber-500 text-white px-3 py-1 rounded-full text-sm font-semibold">65% Win Rate</span>
+                        </div>
+                        
+                        <p class="text-gray-300 mb-6">
+                            Precision-based strategy using fair value gaps and market structure analysis for high-probability entries. 
+                            Designed for patient traders seeking optimal risk-reward ratios.
+                        </p>
+
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <span class="text-gray-400 text-sm">Timeframe</span>
+                                <div class="text-white font-semibold">15m - 1 hour</div>
+                            </div>
+                            <div>
+                                <span class="text-gray-400 text-sm">Risk:Reward</span>
+                                <div class="text-white font-semibold">1:3</div>
+                            </div>
+                            <div>
+                                <span class="text-gray-400 text-sm">Indicators</span>
+                                <div class="text-white text-sm">FVG, BOS, Liquidity</div>
+                            </div>
+                            <div>
+                                <span class="text-gray-400 text-sm">Best Markets</span>
+                                <div class="text-white text-sm">Vol 50, Vol 75</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <h4 class="text-lg font-semibold text-white mb-3">Entry Rules</h4>
+                            <div class="space-y-2 text-sm text-gray-300">
+                                <div class="flex items-start space-x-2">
+                                    <span class="text-green-400 mt-1">•</span>
+                                    <span>Identify fair value gap (FVG) on chart</span>
+                                </div>
+                                <div class="flex items-start space-x-2">
+                                    <span class="text-green-400 mt-1">•</span>
+                                    <span>Wait for price to return to FVG zone</span>
+                                </div>
+                                <div class="flex items-start space-x-2">
+                                    <span class="text-green-400 mt-1">•</span>
+                                    <span>Look for break of structure confirmation</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex space-x-3">
+                            <button onclick="runBacktest('sniper')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors">
+                                Backtest Strategy
+                            </button>
+                            <button onclick="optimizeStrategy('sniper')" class="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors">
+                                Optimize
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Mean Reversion Strategy -->
+                    <div class="strategy-card rounded-lg p-8">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-2xl font-bold text-white">Mean Reversion</h3>
+                            <span class="bg-purple-500 text-white px-3 py-1 rounded-full text-sm font-semibold">70% Win Rate</span>
+                        </div>
+                        
+                        <p class="text-gray-300 mb-6">
+                            Counter-trend strategy using Bollinger Bands and oscillators to identify overextended price movements. 
+                            Excellent for range-bound markets and volatility mean reversion.
+                        </p>
+
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <span class="text-gray-400 text-sm">Timeframe</span>
+                                <div class="text-white font-semibold">30m - 4 hours</div>
+                            </div>
+                            <div>
+                                <span class="text-gray-400 text-sm">Risk:Reward</span>
+                                <div class="text-white font-semibold">1:1.8</div>
+                            </div>
+                            <div>
+                                <span class="text-gray-400 text-sm">Indicators</span>
+                                <div class="text-white text-sm">BB, MACD, RSI</div>
+                            </div>
+                            <div>
+                                <span class="text-gray-400 text-sm">Best Markets</span>
+                                <div class="text-white text-sm">Vol 10, Vol 25</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <h4 class="text-lg font-semibold text-white mb-3">Entry Rules</h4>
+                            <div class="space-y-2 text-sm text-gray-300">
+                                <div class="flex items-start space-x-2">
+                                    <span class="text-green-400 mt-1">•</span>
+                                    <span>Price touches outer Bollinger Band</span>
+                                </div>
+                                <div class="flex items-start space-x-2">
+                                    <span class="text-green-400 mt-1">•</span>
+                                    <span>MACD shows divergence from price</span>
+                                </div>
+                                <div class="flex items-start space-x-2">
+                                    <span class="text-green-400 mt-1">•</span>
+                                    <span>RSI in overbought/oversold territory</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex space-x-3">
+                            <button onclick="runBacktest('meanReversion')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors">
+                                Backtest Strategy
+                            </button>
+                            <button onclick="optimizeStrategy('meanReversion')" class="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors">
+                                Optimize
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Backtesting Results -->
+        <section class="py-12 px-4 sm:px-6 lg:px-8 bg-gray-900 bg-opacity-50">
+            <div class="max-w-7xl mx-auto">
+                <h2 class="text-3xl font-bold text-white mb-8 text-center">Backtesting Results</h2>
+                
+                <div id="backtestResults" class="hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        <div class="performance-metric rounded-lg p-6 text-center">
+                            <div class="text-3xl font-bold text-green-400 mb-2" id="totalTrades">0</div>
+                            <div class="text-gray-400">Total Trades</div>
+                        </div>
+                        <div class="performance-metric rounded-lg p-6 text-center">
+                            <div class="text-3xl font-bold text-blue-400 mb-2" id="winRate">0%</div>
+                            <div class="text-gray-400">Win Rate</div>
+                        </div>
+                        <div class="performance-metric rounded-lg p-6 text-center">
+                            <div class="text-3xl font-bold text-amber-400 mb-2" id="profitFactor">0.0</div>
+                            <div class="text-gray-400">Profit Factor</div>
+                        </div>
+                        <div class="performance-metric rounded-lg p-6 text-center">
+                            <div class="text-3xl font-bold text-purple-400 mb-2" id="maxDrawdown">0%</div>
+                            <div class="text-gray-400">Max Drawdown</div>
+                        </div>
+                    </div>
+
+                    <div class="backtest-result rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-white mb-4">Performance Chart</h3>
+                        <div id="backtestChart" class="h-64"></div>
+                    </div>
+                </div>
+
+                <div id="noResults" class="text-center py-12">
+                    <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    <h3 class="text-xl font-semibold text-white mb-2">No Backtest Results</h3>
+                    <p class="text-gray-400">Click "Backtest Strategy" on any strategy to see detailed performance analysis.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Strategy Comparison -->
+        <section class="py-12 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto">
+                <h2 class="text-3xl font-bold text-white mb-8 text-center">Strategy Comparison</h2>
+                
+                <div class="strategy-card rounded-lg p-6">
+                    <div id="comparisonChart" class="h-96"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 border-t border-gray-700 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="flex items-center justify-center space-x-3 mb-4">
+                    <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-green-500 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">DX</span>
+                    </div>
+                    <span class="text-xl font-display font-bold gradient-text">DerivX Pro</span>
+                </div>
+                <p class="text-gray-400 text-sm">
+                    © 2025 DerivX Pro. Advanced trading analysis for synthetic indices. Trade responsibly.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Strategy-specific functions
+        function runBacktest(strategyType) {
+            // Show loading state
+            showNotification(`Running backtest for ${strategyType} strategy...`, 'info');
+            
+            // Simulate backtest execution
+            setTimeout(() => {
+                const results = generateBacktestResults(strategyType);
+                displayBacktestResults(results);
+                showNotification('Backtest completed successfully!', 'success');
+            }, 2000);
+        }
+
+        function optimizeStrategy(strategyType) {
+            showNotification(`Optimizing ${strategyType} strategy parameters...`, 'info');
+            
+            setTimeout(() => {
+                showNotification('Strategy optimization completed!', 'success');
+            }, 1500);
+        }
+
+        function generateBacktestResults(strategyType) {
+            const baseResults = {
+                scalping: { trades: 245, winRate: 72, profitFactor: 1.85, maxDrawdown: 12.5 },
+                swing: { trades: 89, winRate: 68, profitFactor: 2.12, maxDrawdown: 8.3 },
+                sniper: { trades: 156, winRate: 65, profitFactor: 2.45, maxDrawdown: 15.7 },
+                meanReversion: { trades: 178, winRate: 70, profitFactor: 1.92, maxDrawdown: 10.2 }
+            };
+
+            return baseResults[strategyType] || baseResults.scalping;
+        }
+
+        function displayBacktestResults(results) {
+            document.getElementById('noResults').classList.add('hidden');
+            document.getElementById('backtestResults').classList.remove('hidden');
+            
+            // Update metrics
+            document.getElementById('totalTrades').textContent = results.trades;
+            document.getElementById('winRate').textContent = results.winRate + '%';
+            document.getElementById('profitFactor').textContent = results.profitFactor.toFixed(2);
+            document.getElementById('maxDrawdown').textContent = results.maxDrawdown + '%';
+            
+            // Initialize backtest chart
+            const chart = echarts.init(document.getElementById('backtestChart'));
+            
+            const option = {
+                backgroundColor: 'transparent',
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    axisLine: { lineStyle: { color: '#6b7280' } },
+                    axisLabel: { color: '#9ca3af' }
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLine: { lineStyle: { color: '#6b7280' } },
+                    axisLabel: { color: '#9ca3af' },
+                    splitLine: { lineStyle: { color: '#374151' } }
+                },
+                series: [{
+                    name: 'Equity Curve',
+                    type: 'line',
+                    data: [100, 108, 115, 125, 135, 142],
+                    lineStyle: { color: '#00d4ff', width: 3 },
+                    itemStyle: { color: '#00d4ff' },
+                    areaStyle: {
+                        color: {
+                            type: 'linear',
+                            x: 0, y: 0, x2: 0, y2: 1,
+                            colorStops: [
+                                { offset: 0, color: 'rgba(0, 212, 255, 0.3)' },
+                                { offset: 1, color: 'rgba(0, 212, 255, 0.05)' }
+                            ]
+                        }
+                    }
+                }]
+            };
+            
+            chart.setOption(option);
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg text-white z-50 ${
+                type === 'success' ? 'bg-green-600' :
+                type === 'error' ? 'bg-red-600' :
+                type === 'warning' ? 'bg-yellow-600' :
+                'bg-blue-600'
+            }`;
+            notification.textContent = message;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Initialize comparison chart
+        document.addEventListener('DOMContentLoaded', () => {
+            const comparisonChart = echarts.init(document.getElementById('comparisonChart'));
+            
+            const option = {
+                backgroundColor: 'transparent',
+                title: {
+                    text: 'Strategy Performance Comparison',
+                    textStyle: { color: '#ffffff' }
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: ['Scalping', 'Swing Trading', 'Sniper Entry', 'Mean Reversion'],
+                    textStyle: { color: '#9ca3af' }
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ['Win Rate (%)', 'Profit Factor', 'Max Drawdown (%)', 'Total Return (%)'],
+                    axisLine: { lineStyle: { color: '#6b7280' } },
+                    axisLabel: { color: '#9ca3af' }
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLine: { lineStyle: { color: '#6b7280' } },
+                    axisLabel: { color: '#9ca3af' },
+                    splitLine: { lineStyle: { color: '#374151' } }
+                },
+                series: [
+                    {
+                        name: 'Scalping',
+                        type: 'bar',
+                        data: [72, 1.85, 12.5, 45],
+                        itemStyle: { color: '#10b981' }
+                    },
+                    {
+                        name: 'Swing Trading',
+                        type: 'bar',
+                        data: [68, 2.12, 8.3, 52],
+                        itemStyle: { color: '#00d4ff' }
+                    },
+                    {
+                        name: 'Sniper Entry',
+                        type: 'bar',
+                        data: [65, 2.45, 15.7, 68],
+                        itemStyle: { color: '#ffb347' }
+                    },
+                    {
+                        name: 'Mean Reversion',
+                        type: 'bar',
+                        data: [70, 1.92, 10.2, 38],
+                        itemStyle: { color: '#8b5cf6' }
+                    }
+                ]
+            };
+            
+            comparisonChart.setOption(option);
+        });
+    </script>
+</body>
+</html>

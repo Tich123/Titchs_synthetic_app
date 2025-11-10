@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DerivX Pro - Advanced Trading Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #0a0e1a;
+            --secondary-bg: #1a1d23;
+            --accent-blue: #00d4ff;
+            --accent-amber: #ffb347;
+            --success-green: #10b981;
+            --warning-red: #ef4444;
+            --text-primary: #ffffff;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+        }
+
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .font-display {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary-bg) 0%, #1a1a2e 50%, var(--secondary-bg) 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .hero-bg {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+            backdrop-filter: blur(10px);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--accent-blue), var(--success-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-blue);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        .upload-zone {
+            border: 2px dashed #6b7280;
+            transition: all 0.3s ease;
+        }
+
+        .upload-zone:hover,
+        .upload-zone.dragover {
+            border-color: var(--accent-blue);
+            background-color: rgba(0, 212, 255, 0.1);
+        }
+
+        .signal-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .chart-container {
+            background: rgba(26, 29, 35, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .strategy-card {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .strategy-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.2);
+        }
+
+        .floating-element {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .glow-effect {
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-slide-up {
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--secondary-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-blue);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--success-green);
+        }
+    </style>
+</head>
+<body class="text-white">
+    <!-- Navigation Header -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-gray-900 bg-opacity-90 backdrop-blur-lg border-b border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-8">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-green-500 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-sm">DX</span>
+                        </div>
+                        <h1 class="text-xl font-display font-bold gradient-text">DerivX Pro</h1>
+                    </div>
+                    <div class="hidden md:flex space-x-6">
+                        <a href="index.html" class="nav-link active text-white hover:text-blue-400 px-3 py-2 text-sm font-medium">Dashboard</a>
+                        <a href="strategies.html" class="nav-link text-gray-300 hover:text-blue-400 px-3 py-2 text-sm font-medium">Strategies</a>
+                        <a href="performance.html" class="nav-link text-gray-300 hover:text-blue-400 px-3 py-2 text-sm font-medium">Performance</a>
+                        <a href="about.html" class="nav-link text-gray-300 hover:text-blue-400 px-3 py-2 text-sm font-medium">About</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm text-gray-400">Real-time</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="realTimeToggle" class="sr-only peer" checked>
+                            <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                    </div>
+                    <div class="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center">
+                        <span class="text-sm font-medium">JD</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-16">
+        <!-- Hero Section -->
+        <section class="hero-bg py-12 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-8 animate-fade-in">
+                    <h2 class="text-4xl md:text-5xl font-display font-bold mb-4">
+                        Advanced <span class="gradient-text">Trading Analysis</span>
+                    </h2>
+                    <p class="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
+                        Upload your Deriv synthetic indices charts and get AI-powered analysis with profitable trading signals, sniper entries, and advanced strategies.
+                    </p>
+                </div>
+
+                <!-- Chart Upload Area -->
+                <div class="max-w-4xl mx-auto mb-8 animate-slide-up">
+                    <div id="chartUpload" class="upload-zone rounded-lg p-8 text-center cursor-pointer">
+                        <div class="floating-element">
+                            <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                        <p class="text-lg font-medium text-gray-300 mb-2">Upload Your Trading Chart</p>
+                        <p class="text-sm text-gray-400 mb-4">Drag and drop your chart screenshot or click to browse</p>
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                            Choose File
+                        </button>
+                        <input type="file" id="fileInput" class="hidden" accept="image/*">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analysis Dashboard -->
+        <section class="py-12 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Left Panel - Strategy Selector -->
+                    <div class="space-y-6">
+                        <div class="metric-card rounded-lg p-6">
+                            <h3 class="text-xl font-bold text-white mb-4">Trading Strategies</h3>
+                            <div class="space-y-4">
+                                <div class="strategy-card rounded-lg p-4 cursor-pointer" data-strategy="scalping">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h4 class="font-semibold text-white">Scalping Strategy</h4>
+                                        <span class="text-xs bg-green-500 text-white px-2 py-1 rounded">72% Win</span>
+                                    </div>
+                                    <p class="text-sm text-gray-400 mb-2">8EMA + Stochastic oscillator</p>
+                                    <div class="text-xs text-gray-500">5 min timeframe • 1:1.5 RR</div>
+                                </div>
+
+                                <div class="strategy-card rounded-lg p-4 cursor-pointer" data-strategy="swing">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h4 class="font-semibold text-white">Swing Trading</h4>
+                                        <span class="text-xs bg-blue-500 text-white px-2 py-1 rounded">68% Win</span>
+                                    </div>
+                                    <p class="text-sm text-gray-400 mb-2">Moving averages + RSI</p>
+                                    <div class="text-xs text-gray-500">1-4H timeframe • 1:2 RR</div>
+                                </div>
+
+                                <div class="strategy-card rounded-lg p-4 cursor-pointer" data-strategy="sniper">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h4 class="font-semibold text-white">Sniper Entry</h4>
+                                        <span class="text-xs bg-amber-500 text-white px-2 py-1 rounded">65% Win</span>
+                                    </div>
+                                    <p class="text-sm text-gray-400 mb-2">Fair value gaps + Structure</p>
+                                    <div class="text-xs text-gray-500">15m-1H timeframe • 1:3 RR</div>
+                                </div>
+
+                                <div class="strategy-card rounded-lg p-4 cursor-pointer" data-strategy="meanReversion">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h4 class="font-semibold text-white">Mean Reversion</h4>
+                                        <span class="text-xs bg-purple-500 text-white px-2 py-1 rounded">70% Win</span>
+                                    </div>
+                                    <p class="text-sm text-gray-400 mb-2">Bollinger Bands + MACD</p>
+                                    <div class="text-xs text-gray-500">30m-4H timeframe • 1:1.8 RR</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Market Overview -->
+                        <div class="metric-card rounded-lg p-6">
+                            <h3 class="text-xl font-bold text-white mb-4">Synthetic Indices</h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-400">Volatility 10</span>
+                                    <span class="font-mono text-white" id="vol10Price">1000.50</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-400">Volatility 25</span>
+                                    <span class="font-mono text-white" id="vol25Price">2500.75</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-400">Volatility 50</span>
+                                    <span class="font-mono text-white" id="vol50Price">5000.25</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-400">Volatility 75</span>
+                                    <span class="font-mono text-white" id="vol75Price">7500.00</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-400">Volatility 100</span>
+                                    <span class="font-mono text-white" id="vol100Price">10000.50</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Center Panel - Chart Display -->
+                    <div class="chart-container rounded-lg p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-white">Chart Analysis</h3>
+                            <div class="flex space-x-2">
+                                <button class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm transition-colors">
+                                    Zoom In
+                                </button>
+                                <button class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm transition-colors">
+                                    Zoom Out
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="chartDisplay" class="hidden relative bg-gray-800 rounded-lg h-96 flex items-center justify-center">
+                            <div class="text-center">
+                                <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                </svg>
+                                <p class="text-gray-400">Upload a chart to begin analysis</p>
+                            </div>
+                        </div>
+
+                        <!-- Quick Stats -->
+                        <div class="mt-6 grid grid-cols-3 gap-4">
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-blue-400">24</div>
+                                <div class="text-sm text-gray-400">Signals Today</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-green-400">78%</div>
+                                <div class="text-sm text-gray-400">Win Rate</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-amber-400">+12.5%</div>
+                                <div class="text-sm text-gray-400">Daily P&L</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Panel - Analysis Results -->
+                    <div class="space-y-6">
+                        <div id="strategyInfo" class="metric-card rounded-lg p-6">
+                            <h3 class="text-xl font-bold text-white mb-4">Select a Strategy</h3>
+                            <p class="text-gray-400 mb-4">Choose a trading strategy from the left panel to see detailed information and perform analysis.</p>
+                            <div class="bg-gray-800 rounded-lg p-4">
+                                <div class="text-sm text-gray-400 mb-2">Quick Tips:</div>
+                                <ul class="text-sm text-gray-300 space-y-1">
+                                    <li>• Upload high-quality chart screenshots</li>
+                                    <li>• Select the appropriate timeframe</li>
+                                    <li>• Consider market volatility</li>
+                                    <li>• Manage your risk properly</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div id="analysisResults" class="hidden">
+                            <!-- Analysis results will be populated here -->
+                        </div>
+
+                        <!-- Performance Chart -->
+                        <div class="metric-card rounded-lg p-6">
+                            <h3 class="text-xl font-bold text-white mb-4">Performance</h3>
+                            <div id="performanceChart" class="h-48"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Market Intelligence -->
+        <section class="py-12 px-4 sm:px-6 lg:px-8 bg-gray-900 bg-opacity-50">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-white mb-4">Market Intelligence</h2>
+                    <p class="text-gray-400">Real-time insights and volatility analysis</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="metric-card rounded-lg p-6 text-center">
+                        <div class="text-3xl font-bold text-blue-400 mb-2">127</div>
+                        <div class="text-gray-400">Active Signals</div>
+                        <div class="text-sm text-green-400 mt-1">+12 today</div>
+                    </div>
+                    <div class="metric-card rounded-lg p-6 text-center">
+                        <div class="text-3xl font-bold text-green-400 mb-2">84%</div>
+                        <div class="text-gray-400">Accuracy Rate</div>
+                        <div class="text-sm text-green-400 mt-1">+2.3% this week</div>
+                    </div>
+                    <div class="metric-card rounded-lg p-6 text-center">
+                        <div class="text-3xl font-bold text-amber-400 mb-2">$2.4K</div>
+                        <div class="text-gray-400">Weekly Profit</div>
+                        <div class="text-sm text-green-400 mt-1">+15.8% growth</div>
+                    </div>
+                    <div class="metric-card rounded-lg p-6 text-center">
+                        <div class="text-3xl font-bold text-purple-400 mb-2">156</div>
+                        <div class="text-gray-400">Total Trades</div>
+                        <div class="text-sm text-blue-400 mt-1">This month</div>
+                    </div>
+                </div>
+
+                <!-- Volatility Chart -->
+                <div class="mt-8">
+                    <div class="metric-card rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-white mb-4">Volatility Analysis</h3>
+                        <div id="volatilityChart" class="h-64"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Analysis -->
+        <section class="py-12 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex items-center justify-between mb-8">
+                    <h2 class="text-3xl font-bold text-white">Recent Analysis</h2>
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                        View All
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="metric-card rounded-lg p-6 card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-sm text-gray-400">2 hours ago</span>
+                            <span class="px-2 py-1 bg-green-500 text-white text-xs rounded">BUY</span>
+                        </div>
+                        <h4 class="font-semibold text-white mb-2">Volatility 50 - Scalping</h4>
+                        <p class="text-sm text-gray-400 mb-3">Strong bullish momentum detected with 85% confidence</p>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Entry: 5000.50</span>
+                            <span class="text-green-400">+8.25 profit</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card rounded-lg p-6 card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-sm text-gray-400">4 hours ago</span>
+                            <span class="px-2 py-1 bg-red-500 text-white text-xs rounded">SELL</span>
+                        </div>
+                        <h4 class="font-semibold text-white mb-2">Volatility 25 - Swing</h4>
+                        <p class="text-sm text-gray-400 mb-3">Mean reversion pattern identified with 78% confidence</p>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Entry: 2500.25</span>
+                            <span class="text-green-400">+4.75 profit</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card rounded-lg p-6 card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-sm text-gray-400">6 hours ago</span>
+                            <span class="px-2 py-1 bg-green-500 text-white text-xs rounded">BUY</span>
+                        </div>
+                        <h4 class="font-semibold text-white mb-2">Volatility 75 - Sniper</h4>
+                        <p class="text-sm text-gray-400 mb-3">Fair value gap opportunity with 92% confidence</p>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Entry: 7500.00</span>
+                            <span class="text-green-400">+15.25 profit</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 border-t border-gray-700 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="flex items-center justify-center space-x-3 mb-4">
+                    <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-green-500 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">DX</span>
+                    </div>
+                    <span class="text-xl font-display font-bold gradient-text">DerivX Pro</span>
+                </div>
+                <p class="text-gray-400 text-sm">
+                    © 2025 DerivX Pro. Advanced trading analysis for synthetic indices. Trade responsibly.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+
+<section id="backend-dashboard" style="padding:20px;border-top:1px solid #ddd;">
+  <h2>Live Dashboard (Backend Integrated)</h2>
+  <div id="performance-metrics">Loading performance...</div>
+  <h3>Strategies</h3>
+  <ul id="strategies-list"></ul>
+  <h3>Saved Trades</h3>
+  <ul id="trades-list"></ul>
+
+  <h3>Submit Trade</h3>
+  <form id="trade-form">
+    <label>Symbol: <input name="symbol" required></label><br>
+    <label>Type: <input name="type" required placeholder="buy/sell"></label><br>
+    <label>Amount: <input name="amount" type="number" name="amount" step="any" required></label><br>
+    <label>Notes: <input name="notes"></label><br>
+    <button type="submit">Submit Trade</button>
+  </form>
+</section>
+
+</body>
+</html>
